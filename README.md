@@ -1,4 +1,4 @@
-# Summit Lookout
+# Summit Lookout for SOTA
 
 **Find upcoming SOTA activations by grid square, region, or location.**
 
