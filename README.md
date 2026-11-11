@@ -68,7 +68,7 @@ python3 -m http.server 8000
 - **Untrusted data is never rendered as HTML.** API text is escaped in tables, and map popups are built from DOM text nodes. This also avoids [CVE-2025-69993](https://nvd.nist.gov/vuln/detail/CVE-2025-69993), a `bindPopup()` XSS issue in Leaflet ≤ 1.9.4.
 - **Validated references:** summit references from the API must match the `ASSOC/RG-123` format before they're used in a request URL, and each path segment is encoded.
 - **No credentials or cookies** are sent to any API.
-- **Location:** "Use my location" runs only when you click it, and it's rounded to about 1 km before it's shown or saved.
+- **Location:** "Use my location" runs only when you click it, and it's **rounded to about 1 km** before it's shown or saved.
 - **Local storage:** your last search, theme, band/mode filters and a cache of summit coordinates are kept in your browser's `localStorage`. Nothing is sent anywhere else. Clear the coordinate cache from *How this works / troubleshooting* on the page.
 
 Found a security issue? Please open a private security advisory on this repo rather than a public issue.

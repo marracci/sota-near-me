@@ -414,7 +414,7 @@
   }
   (() => {
     let saved = null; try { saved = localStorage.getItem(THEME_KEY); } catch {}
-    setTheme(saved === "dark" || saved === "light" ? saved : effectiveTheme());
+    setTheme(saved === "dark" || saved === "light" ? saved : "dark");
   })();
   $("themeBtn").addEventListener("click", () => {
     const t = effectiveTheme() === "dark" ? "light" : "dark";
