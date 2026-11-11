@@ -6,7 +6,7 @@ Summit Lookout is a small, static web app for [Summits on the Air (SOTA)](https:
 
 It runs entirely in your browser. There's no server, no account, no API key, and no tracking.
 
-**Live site:** `https://marracci.github.io/summit-lookout/`
+**Live site:** `https://marracci.github.io/sota-near-me/`
 
 ![Summit Lookout screenshot](docs/screenshot.png)
 
