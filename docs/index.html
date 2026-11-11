@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- Security: only this site's own scripts/styles run; network access is limited to the SOTA APIs and OpenTopoMap tiles. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data: https://a.tile.opentopomap.org https://b.tile.opentopomap.org https://c.tile.opentopomap.org; connect-src https://api-db2.sota.org.uk https://api2.sota.org.uk https://api.sotl.as; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>SOTA Alerts Near Me</title>
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<main>
+  <div class="head">
+    <h1>SOTA Alert Finder</h1>
+    <button type="button" id="themeBtn" aria-label="Toggle dark mode">Dark mode</button>
+  </div>
+  <p class="sub">Find upcoming SOTAwatch alerts (planned activations) by grid square, association/region, or coordinates. Nothing is fetched until you press Search.</p>
+
+  <form id="f" autocomplete="off">
+    <div class="row">
+      <label>Search by
+        <select id="mode">
+          <option value="grid" selected>Grid square</option>
+          <option value="region">Association / Region</option>
+          <option value="latlon">Latitude / Longitude</option>
+        </select>
+      </label>
+      <label data-mode="grid">Maidenhead grid (4–10 chars)
+        <input id="grid" placeholder="e.g. CN96tm" maxlength="10">
+      </label>
+      <label data-mode="grid" class="check">
+        <span>Grid area</span>
+        <select id="gridScope">
+          <option value="radius" selected>Radius from grid center</option>
+          <option value="inside">Only summits inside this grid</option>
+        </select>
+      </label>
+      <label data-mode="region">Association / Region / Summit (comma-separated)
+        <input id="region" placeholder="e.g. W7W/MC, W7W/KG, W7O, W7W/LC-001">
+      </label>
+      <label data-mode="latlon">Latitude
+        <input id="lat" placeholder="46.60" inputmode="decimal">
+      </label>
+      <label data-mode="latlon">Longitude
+        <input id="lon" placeholder="-120.51" inputmode="decimal">
+      </label>
+    </div>
+    <div class="row">
+      <label data-mode="grid latlon" data-radius>Radius
+        <input id="radius" type="number" min="1" max="2000" value="100">
+      </label>
+      <label data-mode="grid latlon">Units
+        <select id="units"><option value="km">km</option><option value="mi" selected>miles</option></select>
+      </label>
+      <label>Look ahead
+        <select id="ahead">
+          <option value="24">Next 24 hours</option>
+          <option value="72">Next 3 days</option>
+          <option value="168" selected>Next 7 days</option>
+          <option value="720">Next 30 days</option>
+          <option value="8760">Everything posted</option>
+        </select>
+      </label>
+      <label data-mode="grid latlon">Limit to associations (optional, faster)
+        <input id="assocs" placeholder="e.g. W7W, W7O">
+      </label>
+    </div>
+    <fieldset>
+      <legend>Band / mode filter (none selected = show all; changes apply instantly, no new query)</legend>
+      <div class="toggles" id="bandToggles"><span class="lbl">Bands</span></div>
+      <div class="toggles" id="modeToggles"><span class="lbl">Modes</span></div>
+      <div class="toggles">
+        <label class="tog"><input type="checkbox" id="incUnclear" checked><span>Keep alerts with unclear band/mode</span></label>
+        <button type="button" class="linkbtn" id="clearBM">Clear band/mode filter</button>
+      </div>
+    </fieldset>
+    <div class="actions">
+      <button type="submit" class="primary" id="go">Search alerts</button>
+      <button type="button" id="here">Use my location</button>
+      <button type="button" id="stop" disabled>Stop</button>
+      <span class="hint" id="modeHint"></span>
+    </div>
+  </form>
+
+  <div id="status"></div>
+  <div class="summary" id="summary"></div>
+  <p id="filterNote" hidden></p>
+  <div class="toolbar" id="toolbar" hidden>
+    <button type="button" id="mapBtn">Show on map</button>
+    <button type="button" id="exportBtn">Export .txt</button>
+  </div>
+  <div id="mapWrap" hidden>
+    <div id="map"></div>
+    <div id="mapNote"></div>
+  </div>
+  <div class="tablewrap" id="results" hidden>
+    <table>
+      <thead>
+        <tr>
+          <th data-sort="time">When (UTC / local)</th>
+          <th data-sort="call">Activator</th>
+          <th data-sort="ref">Summit</th>
+          <th data-sort="dist">Distance</th>
+          <th>Freq / mode</th>
+          <th>Comments</th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </div>
+
+  <div id="wildWrap" hidden>
+    <h2>Alerts without a fixed summit in a nearby association</h2>
+    <p class="muted">Wildcard refs (e.g. W7W/LC-XXX) or summits the API couldn't locate. They may or may not be in range.</p>
+    <div class="tablewrap"><table><tbody id="wild"></tbody></table></div>
+  </div>
+
+  <details>
+    <summary>How this works / troubleshooting</summary>
+    <p><b>Association / Region mode</b> matches alerts by reference only (no coordinates needed): W7W, W7W/MC, or W7W/MC-001. Wildcard alerts in that region (e.g. W7W/MC-XXX) are included.</p>
+    <p><b>Grid and Lat/Lon modes:</b> 1. Fetches all current alerts from the SOTA API. 2. Fetches the association list and keeps only associations whose bounding box overlaps your search circle (or uses the associations you typed). 3. Looks up coordinates for each alerted summit in those associations (cached in this browser afterwards). 4. Keeps summits inside your radius and within the look-ahead window.</p>
+    <p>If you see a network/CORS error, open the page from a web server (e.g. GitHub Pages or <code>python3 -m http.server</code>) rather than as a local file, or try another browser. The SOTA API does not publish a formal spec; endpoints tried are listed in the status line on failure.</p>
+    <p><button type="button" id="clearCache">Clear cached summit coordinates</button></p>
+  </details>
+</main>
+
+<script src="js/sota-alerts.js" defer></script>
+
+</body>
+</html>

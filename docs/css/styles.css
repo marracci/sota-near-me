@@ -1,0 +1,90 @@
+/* SOTA Alerts Near Me: styles
+   Palette: blue (primary actions, pins), teal (selection, highlights, search area), white (surfaces). */
+:root {
+  --bg: #f4f8fc;  --panel: #ffffff; --ink: #0f2a43; --muted: #557089;
+  --line: #d6e3ef;
+  --accent: #1f5fa8;  --accent-ink: #ffffff;   /* blue */
+  --teal: #0e7c7b;    --teal-ink: #ffffff;     /* teal */
+  --chip: #e3f4f3;    --chip-ink: #0b5e5d;
+  --pin: #1f5fa8;     --area: #0e7c7b;
+  --warn: #9a5b00;    --err: #b42318;
+  --head-grad: linear-gradient(90deg, #1f5fa8, #0e7c7b);
+  color-scheme: light;
+}
+:root[data-theme="dark"] {
+  --bg: #0b1a2b;  --panel: #10243a; --ink: #eef5fb; --muted: #9db4c9;
+  --line: #1e3a56;
+  --accent: #5aa9ef;  --accent-ink: #06182b;
+  --teal: #34c3bd;    --teal-ink: #04201f;
+  --chip: #12393f;    --chip-ink: #9fe6e2;
+  --pin: #1f5fa8;     --area: #0e9c9a;
+  --warn: #f0b45a;    --err: #ff8a80;
+  --head-grad: linear-gradient(90deg, #5aa9ef, #34c3bd);
+  color-scheme: dark;
+}
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 15px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--ink); }
+  main { max-width: 1100px; margin: 0 auto; padding: 24px 16px 48px; }
+  h1 { font-size: 22px; margin: 0 0 4px; color: var(--accent); }
+body::before { content: ""; display: block; height: 4px; background: var(--head-grad); }
+  .head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+  .toolbar { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 10px; }
+  #mapWrap { margin: 0 0 14px; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: var(--panel); }
+  #map { height: 480px; width: 100%; }
+  #mapNote { font-size: 12px; color: var(--muted); padding: 6px 10px; border-top: 1px solid var(--line); }
+  .pin { background: none; border: 0; }
+  .pin svg { display: block; filter: drop-shadow(0 1px 1px rgba(0,0,0,.4)); }
+  .pin b { position: absolute; top: 4px; left: 0; width: 26px; text-align: center; font: 600 11px system-ui, sans-serif; color: #fff; }
+  .leaflet-popup-content { font: 13px/1.4 system-ui, sans-serif; margin: 10px 12px; }
+  .leaflet-popup-content .pref { font-weight: 600; }
+  .leaflet-popup-content .pa { margin-top: 6px; padding-top: 6px; border-top: 1px solid #ddd; }
+  .sub { color: var(--muted); margin: 0 0 20px; }
+  form { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 16px; display: grid; gap: 14px; }
+  .row { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; }
+  label { display: grid; gap: 4px; font-size: 13px; color: var(--muted); }
+  input, select { font: inherit; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 7px 9px; width: 100%; }
+  input:focus, select:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+  .actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+  button { font: inherit; border-radius: 6px; padding: 8px 14px; border: 1px solid var(--line); background: var(--panel); color: var(--ink); cursor: pointer; }
+  button.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); font-weight: 600; }
+  button:disabled { opacity: .55; cursor: default; }
+  .hint { font-size: 12px; color: var(--muted); }
+  [hidden] { display: none !important; }
+  fieldset { border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; margin: 0; display: grid; gap: 8px; }
+  legend { font-size: 13px; color: var(--muted); padding: 0 4px; }
+  .toggles { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+  .toggles .lbl { font-size: 12px; color: var(--muted); width: 48px; }
+  .tog { position: relative; }
+  .tog input { position: absolute; opacity: 0; pointer-events: none; }
+  .tog span { display: inline-block; font-size: 13px; padding: 3px 10px; border: 1px solid var(--line); border-radius: 999px; cursor: pointer; background: var(--bg); }
+  .tog input:checked + span { background: var(--teal); color: var(--teal-ink); border-color: var(--teal); }
+  .tog input:focus-visible + span { outline: 2px solid var(--teal); outline-offset: 1px; }
+  .linkbtn { background: none; border: 0; padding: 0 4px; color: var(--teal); font-size: 12px; cursor: pointer; }
+  .tags { margin-top: 3px; display: flex; flex-wrap: wrap; gap: 4px; }
+  .tag { font-size: 11px; background: var(--chip); color: var(--chip-ink); border-radius: 4px; padding: 0 5px; }
+  .tag.q { opacity: .7; font-style: italic; }
+  #filterNote { font-size: 12px; color: var(--muted); margin: 0 0 8px; }
+  #status { margin: 16px 0 8px; font-size: 13px; color: var(--muted); min-height: 1.4em; white-space: pre-line; }
+  #status.err { color: var(--err); }
+  #status.warn { color: var(--warn); }
+  .summary { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0 12px; }
+  .chip { background: var(--chip); color: var(--chip-ink); border-radius: 999px; padding: 3px 10px; font-size: 12px; }
+  .tablewrap { overflow-x: auto; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; }
+  table { border-collapse: collapse; width: 100%; font-size: 14px; }
+  th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { font-size: 12px; text-transform: uppercase; letter-spacing: .03em; color: var(--muted); cursor: pointer; user-select: none; white-space: nowrap; }
+  th[data-sort]::after { content: ""; }
+  th.sorted-asc::after { content: " ▲"; }
+  th.sorted-desc::after { content: " ▼"; }
+  tr:last-child td { border-bottom: 0; }
+  td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .call { font-weight: 600; }
+  .muted { color: var(--muted); font-size: 12px; }
+  a { color: var(--accent); }
+  .empty { padding: 18px; color: var(--muted); }
+  h2 { font-size: 16px; margin: 24px 0 8px; }
+  details { margin-top: 24px; color: var(--muted); font-size: 13px; }
+  details code { font-size: 12px; }
+button:not(.primary):not(.linkbtn):hover { border-color: var(--teal); }
+th.sorted-asc, th.sorted-desc { color: var(--teal); }
+.leaflet-popup-content .pmeta { opacity: .7; }
