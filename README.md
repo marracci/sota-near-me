@@ -12,6 +12,12 @@ It runs entirely in your browser. There's no server, no account, no API key, and
 
 ---
 
+## Disclaimer
+
+Summit Lookout is an independent project. It is **not affiliated with or endorsed by** Summits on the Air (SOTA), SOTAwatch, SOTLAS or OpenTopoMap. "Summits on the Air" and "SOTA" are names of the SOTA programme.
+
+Alert times, frequencies and locations are whatever activators posted. Always confirm on air.
+
 ## Features
 
 - **Three ways to search**
@@ -56,29 +62,6 @@ python3 -m http.server 8000
 ```
 
 
-## Deploying to GitHub Pages
-
-The site lives in `/docs`.
-
-1. Push the repo to GitHub.
-2. Go to **Settings → Pages → Build and deployment**, set **Source** to *Deploy from a branch*, then choose `main` and `/docs`.
-3. The site appears at `https://<username>.github.io/<repo>/` within a couple of minutes.
-
-`docs/.nojekyll` tells Pages to serve the files as they are, without Jekyll processing. Keep it in place.
-
-## Project structure
-
-```
-docs/
-├── .nojekyll
-├── index.html            Page markup and security headers (CSP)
-├── css/styles.css        Theme (light and dark) and layout
-├── js/sota-alerts.js     All application logic
-└── vendor/leaflet/       Leaflet 1.9.4, bundled locally (no CDN)
-```
-
-Theme colours are CSS variables at the top of `styles.css`, with one block for light and one for dark.
-
 ## Security and privacy
 
 - **Content Security Policy:** only the site's own scripts and styles can run. Network access is limited to the SOTA API hosts and OpenTopoMap tiles.
@@ -107,22 +90,9 @@ Found a security issue? Please open a private security advisory on this repo rat
 
 Please use these free services considerately. The app queries only when you press Search and caches summit coordinates to keep load low.
 
-## Disclaimer
-
-Summit Lookout is an independent project. It is **not affiliated with or endorsed by** Summits on the Air (SOTA), SOTAwatch, SOTLAS or OpenTopoMap. "Summits on the Air" and "SOTA" are names of the SOTA programme.
-
-Alert times, frequencies and locations are whatever activators posted. Always confirm on air.
-
-## Contributing
-
-Issues and pull requests are welcome. Keep the app dependency-free and static, with no build step, and run any new outside data through the same escaping and validation as the existing code.
-
-## Acknowledgements
-
-Developed with AI assistance (Claude, by Anthropic). Design decisions, review and testing by the author.
 
 ## License
 
 [MIT](LICENSE) © 2026 BJ Marraccini
 
-73!
+73! KD7MTN
