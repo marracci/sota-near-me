@@ -414,7 +414,7 @@
   }
   (() => {
     let saved = null; try { saved = localStorage.getItem(THEME_KEY); } catch {}
-    setTheme(saved === "dark" || saved === "light" ? saved : "dark");
+    setTheme(saved === "dark" || saved === "light" ? saved : "dark");   // default: dark
   })();
   $("themeBtn").addEventListener("click", () => {
     const t = effectiveTheme() === "dark" ? "light" : "dark";
@@ -737,8 +737,7 @@
         render(units);
         $("summary").innerHTML = [
           `Area: ${label}`,
-          `${rows.length} matching alert${rows.length === 1 ? "" : "s"}`,
-          `${totalInWindow} alerts worldwide in window`
+          `Showing ${rows.length} result${rows.length === 1 ? "" : "s"} out of ${totalInWindow} worldwide`
         ].map(c => `<span class="chip">${esc(c)}</span>`).join("");
         setStatus(`Done at ${new Date().toLocaleTimeString()}.`);
         return;
@@ -808,8 +807,7 @@
       const chips = [
         gridBox ? `Inside grid ${label}` : `Center: ${label}`,
         gridBox ? "distance from grid center" : `Radius: ${radiusIn} ${units}`,
-        `${rows.length} alert${rows.length === 1 ? "" : "s"} in area`,
-        `${totalInWindow} alerts worldwide in window`
+        `Showing ${rows.length} result${rows.length === 1 ? "" : "s"} out of ${totalInWindow} worldwide`
       ];
       if (assocNote) chips.push(assocNote);
       $("summary").innerHTML = chips.map(c => `<span class="chip">${esc(c)}</span>`).join("");
