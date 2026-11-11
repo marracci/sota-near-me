@@ -93,6 +93,6 @@ Please use these free services considerately. The app queries only when you pres
 
 ## License
 
-[MIT](LICENSE) © 2026 BJ Marraccini
+[MIT](LICENSE) © 2026 B.J. Marraccini
 
 73! KD7MTN
