@@ -32,6 +32,8 @@ Alert times, frequencies and locations are whatever activators posted. Always co
 - **Light and dark themes**, remembered between visits.
 - **Wildcard alerts** (e.g. `W7W/MC-XXX`) are listed separately rather than dropped.
 
+![Summit Lookout Map View](docs/screenshot2.png)
+
 ## How it works
 
 Nothing is fetched until you press **Search alerts**. Then the app:
@@ -39,7 +41,8 @@ Nothing is fetched until you press **Search alerts**. Then the app:
 1. Downloads the current alert list from the SOTA API.
 2. In region mode, matches alerts by reference. No coordinates are needed.
 3. In grid and lat/lon modes, narrows the list to associations whose bounding box overlaps your search area, looks up coordinates for each alerted summit, and keeps the ones inside your radius or grid.
-4. Caches summit coordinates in your browser, so later searches make fewer API calls.
+4. Displays list of matched alerts in a table. These results can be viewed in a map, and exported to a .txt file
+5. Caches summit coordinates in your browser, so later searches make fewer API calls.
 
 ### Band and mode detection
 
