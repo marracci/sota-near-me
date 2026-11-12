@@ -1,4 +1,4 @@
-# Summit Lookout for SOTA
+# SOTA Near Me
 
 **Find upcoming SOTA activations near you, built for VHF/UHF and regional HF chasers.**
 
@@ -82,15 +82,6 @@ python3 -m http.server 8000
 ```
 
 
-## Customizing the header image
-
-The banner behind the title is set in `docs/css/styles.css`, in the `.hero` rule. To use your own photo:
-
-1. Add it to `docs/images/`. Aim for about 1600×400 px, JPG or WebP, under about 300 KB.
-2. Change `url("../images/header.svg")` in the `.hero` rule to point at your file.
-
-A dark gradient sits between the photo and the title, so the title stays readable on any image. Images served from the site itself are already allowed by the Content Security Policy.
-
 ## Security and privacy
 
 - **Content Security Policy:** only the site's own scripts and styles can run. Network access is limited to the SOTA API hosts and OpenTopoMap tiles.
@@ -105,7 +96,7 @@ Found a security issue? Please open a private security advisory on this repo rat
 ## Known limitations
 
 - **Not every activation is alerted.** Many activators post spots without an alert, and those won't appear here. For live spots, use [SOTAwatch](https://sotawatch.sota.org.uk/), [SOTLAS](https://sotl.as/) or [HamAlert](https://hamalert.org/).
-- **The SOTA API has no published specification.** Endpoints or response fields may change without notice. The app tries fallback endpoints and reports errors in the status line.
+- **The SOTA API has no published schema specification.** Endpoints or response fields may change without notice. The app tries fallback endpoints and reports errors in the status line.
 - **Wildcard alerts** (`-XXX`) can't be placed on the map or measured for distance.
 - **Band and mode detection** is heuristic. See [Band and mode detection](#band-and-mode-detection).
 - **The 500-mile band rule is a rule of thumb.** Propagation varies with time of day, season and solar conditions. A 40m signal may skip past you at night, and 6m can open well beyond 500 miles during sporadic-E.
