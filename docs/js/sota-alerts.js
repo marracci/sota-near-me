@@ -220,6 +220,13 @@
   ];
   const BAND_NAMES = BANDS.map(b => b[0]);
   const HF = ["160m","80m","60m","40m","30m","20m","17m","15m","12m","10m"];
+  // Bands that reliably work within ~500 miles. This app is for local/regional chasing,
+  // so alerts posted ONLY on other bands (30m and up) are left out of the results.
+  //  - VHF/UHF: line of sight, extended by summit height
+  //  - HF 160/80/60/40m: ground wave and near-vertical skywave (NVIS), roughly 0-500 mi
+  const LOCAL_VU = ["6m", "2m", "1.25m", "70cm", "23cm"];
+  const LOCAL_HF = ["160m", "80m", "60m", "40m"];
+  const LOCAL_BANDS = new Set([...LOCAL_VU, ...LOCAL_HF]);
   const MODES = ["CW", "SSB", "FM", "AM", "Data", "DV"];
   const MODE_WORDS = {
     cw: "CW", ssb: "SSB", usb: "SSB", lsb: "SSB", phone: "SSB", fm: "FM", am: "AM",
@@ -272,7 +279,8 @@
       el.appendChild(lab);
     }
   }
-  buildToggles("bandToggles", BAND_NAMES, "bandCb");
+  buildToggles("bandTogglesV", LOCAL_VU, "bandCb");
+  buildToggles("bandTogglesH", LOCAL_HF, "bandCb");
   buildToggles("modeToggles", MODES, "modeCb");
 
   function bmState() {
@@ -293,6 +301,15 @@
       else if (!st.unclear) return false;
     }
     return true;
+  }
+  // True if the alert lists at least one regional band, or no recognisable band at all
+  // (unclear alerts are kept so nothing is silently missed).
+  function isRegional(r) {
+    const p = parseFreq(r.freq);
+    return p.bands.size === 0 || [...p.bands].some(b => LOCAL_BANDS.has(b));
+  }
+  function longHaulNote(n) {
+    return n ? ` ${n} alert(s) in this area were posted only for long-distance HF bands (30m and up) and aren't shown.` : "";
   }
   function tagsHTML(freq) {
     const p = parseFreq(freq);
@@ -446,6 +463,7 @@
     else if (ls.gridBox) L.push(`Area: inside grid ${ls.label}`);
     else if (ls.label) L.push(`Area: ${ls.radiusIn} ${ls.units} around ${ls.label}`);
     L.push(`Window: ${ls.aheadH >= 8760 ? "all posted alerts" : "next " + ls.aheadH + " h"}`);
+    L.push(`Bands: regional only (${[...LOCAL_VU, ...LOCAL_HF].join(", ")})`);
     if (st.bands.length || st.modes.length) L.push(`Band/mode filter: ${[...st.bands, ...st.modes].join(", ")}${st.unclear ? " (+ unclear)" : ""}`);
     L.push("");
     const vr = visibleRows();
@@ -583,8 +601,8 @@
       else map.setView([46.6, -120.5], 6);
     }, 0);
   }
-  $("mapBtn").addEventListener("click", async () => {
-    if (!$("mapWrap").hidden) { $("mapWrap").hidden = true; $("mapBtn").textContent = "Show on map"; return; }
+  // The map opens automatically after every search; the button hides or re-shows it.
+  async function showMap() {
     $("mapBtn").disabled = true;
     try {
       await loadLeaflet();
@@ -592,10 +610,16 @@
       $("mapBtn").textContent = "Hide map";
       drawMap();
     } catch (e) {
+      $("mapWrap").hidden = true;
+      $("mapBtn").textContent = "Show on map";
       setStatus(e.message + ".", "err");
     } finally {
       $("mapBtn").disabled = false;
     }
+  }
+  $("mapBtn").addEventListener("click", () => {
+    if (!$("mapWrap").hidden) { $("mapWrap").hidden = true; $("mapBtn").textContent = "Show on map"; return; }
+    showMap();
   });
 
   // ---------- Prefs ----------
@@ -692,7 +716,7 @@
     const p = {}; for (const k of PREF_FIELDS) p[k] = $(k).value; saveJSON(PREFS_KEY, p);
 
     lastSearch = { mode, label, center, gridBox, rKm, radiusIn, units, aheadH, at: new Date() };
-    $("toolbar").hidden = true; $("mapWrap").hidden = true; $("mapBtn").textContent = "Show on map";
+    $("toolbar").hidden = true; $("mapWrap").hidden = true; $("mapBtn").textContent = "Hide map";
     abortCtl = new AbortController();
     const signal = abortCtl.signal;
     $("go").disabled = true; $("stop").disabled = false;
@@ -733,13 +757,16 @@
           const c = coords[a.ref];
           rows.push({ ...a, summitName: summitLabel(c), grid: c ? latLonToGrid(c.lat, c.lon) : "", lat: c?.lat, lon: c?.lon });
         }
+        const longHaul = rows.filter(r => !isRegional(r)).length;
+        rows = rows.filter(isRegional);
         $("results").hidden = false; $("toolbar").hidden = false;
         render(units);
         $("summary").innerHTML = [
           `Area: ${label}`,
           `Showing ${rows.length} result${rows.length === 1 ? "" : "s"} out of ${totalInWindow} worldwide`
         ].map(c => `<span class="chip">${esc(c)}</span>`).join("");
-        setStatus(`Done at ${new Date().toLocaleTimeString()}.`);
+        setStatus(`Done at ${new Date().toLocaleTimeString()}.` + longHaulNote(longHaul));
+        showMap();
         return;
       }
 
@@ -800,9 +827,12 @@
         }
       }
 
+      const placed = [...wild, ...unlocated];
+      const longHaul = rows.filter(r => !isRegional(r)).length + placed.filter(r => !isRegional(r)).length;
+      rows = rows.filter(isRegional);
       $("results").hidden = false; $("toolbar").hidden = false;
       render(units);
-      renderWild([...wild, ...unlocated].sort((a, b) => a.when - b.when));
+      renderWild(placed.filter(isRegional).sort((a, b) => a.when - b.when));
 
       const chips = [
         gridBox ? `Inside grid ${label}` : `Center: ${label}`,
@@ -816,7 +846,9 @@
       if (!assocSet) { msg += " Association bounds were unavailable, so all alerted summits were checked."; kind = "warn"; }
       if (capped) { msg += ` Only the first ${NO_FILTER_CAP} summits were checked; add an association filter for complete results.`; kind = "warn"; }
       if (unlocated.length) { msg += ` ${unlocated.length} alert(s) couldn't be located and are listed below.`; }
+      msg += longHaulNote(longHaul);
       setStatus(msg, kind);
+      showMap();
     } catch (e) {
       if (e.name === "AbortError") setStatus("Stopped.", "warn");
       else if (e.isNet || e instanceof TypeError) setStatus("Couldn't reach the SOTA API (network or CORS block). If you opened this as a local file, try serving it from a web server or GitHub Pages.\n" + e.message, "err");

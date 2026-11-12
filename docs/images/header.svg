@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 400" preserveAspectRatio="xMidYMid slice">
+  <!-- Placeholder header art for Summit Lookout. Replace with your own image (see css/styles.css, .hero). -->
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0b2a4a"/>
+      <stop offset="0.6" stop-color="#1f5fa8"/>
+      <stop offset="1" stop-color="#5fb3d9"/>
+    </linearGradient>
+  </defs>
+  <rect width="1600" height="400" fill="url(#sky)"/>
+  <circle cx="1270" cy="110" r="38" fill="#e8f4fb" opacity="0.85"/>
+  <path d="M0 260 L170 170 L290 230 L430 120 L560 210 L700 150 L860 240 L1010 130 L1160 220 L1300 160 L1450 230 L1600 180 L1600 400 L0 400 Z" fill="#2a6f9a" opacity="0.85"/>
+  <path d="M0 300 L140 240 L260 290 L410 200 L520 270 L640 230 L790 300 L930 210 L1080 290 L1230 240 L1390 300 L1520 250 L1600 280 L1600 400 L0 400 Z" fill="#0e7c7b"/>
+  <path d="M410 200 L440 222 L425 220 L410 232 L395 219 L380 224 Z M930 210 L960 233 L944 230 L930 242 L916 229 L900 234 Z" fill="#e8f4fb" opacity="0.9"/>
+  <path d="M0 345 L180 310 L360 340 L560 300 L760 345 L980 305 L1200 340 L1420 310 L1600 335 L1600 400 L0 400 Z" fill="#0b3b4f"/>
+  <g stroke="#e8f4fb" stroke-width="3" fill="none" opacity="0.9">
+    <path d="M930 210 L930 168"/>
+    <path d="M918 180 A16 16 0 0 1 942 180"/>
+    <path d="M910 172 A26 26 0 0 1 950 172"/>
+  </g>
+</svg>

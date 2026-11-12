@@ -1,12 +1,12 @@
 # Summit Lookout for SOTA
 
-**Find upcoming SOTA activations by grid square, region, or location.**
+**Find upcoming SOTA activations near you, built for VHF/UHF and regional HF chasers.**
 
-Summit Lookout is a small, static web app for [Summits on the Air (SOTA)](https://www.sota.org.uk/) chasers. It searches [SOTAwatch](https://sotawatch.sota.org.uk/) **alerts** (planned activations) for a grid square, an association or region, or a point on the map. You can filter the results by band and mode, view them on a topographic map, or export them to a text file.
+Summit Lookout is a small, static web app for [Summits on the Air (SOTA)](https://www.sota.org.uk/) chasers. Its main purpose is to tell VHF/UHF operators when an activator has set an alert near them. It searches [SOTAwatch](https://sotawatch.sota.org.uk/) **alerts** (planned activations) for a grid square, an association or region, or a point on the map, and shows only alerts on bands that work within about 500 miles. Results appear on a topographic map and in a table, can be filtered by band and mode, and can be exported to a text file.
 
 It runs entirely in your browser. There's no server, no account, no API key, and no tracking.
 
-**Live site:** `https://marracci.github.io/sota-near-me/`
+**Live site:** https://marracci.github.io/sota-near-me/
 
 ![Summit Lookout screenshot](docs/screenshot.png)
 
@@ -25,11 +25,12 @@ Alert times, frequencies and locations are whatever activators posted. Always co
   - **Association / Region / Summit:** `W7W` (whole association), `W7W/MC` (one region), or `W7W/MC-001` (one summit). Separate several with commas.
   - **Latitude / Longitude:** a point and a radius, with an optional "Use my location" button.
 - **Look-ahead window:** the next 24 hours, 3 days, 7 days, 30 days, or every posted alert.
-- **Band and mode filters:** 160m–23cm; CW, SSB, FM, AM, Data and DV. Filters apply instantly and don't re-query the API.
-- **Map view:** pins on [OpenTopoMap](https://opentopomap.org/) tiles via [Leaflet](https://leafletjs.com/), with the search radius or grid outline drawn on the map. Several alerts on the same summit share one numbered pin.
+- **Regional bands only:** VHF/UHF (6m, 2m, 1.25m, 70cm, 23cm) and regional HF (160m, 80m, 60m, 40m). Alerts posted only for 30m and higher HF bands are left out. See [Which bands are shown](#which-bands-are-shown).
+- **Band and mode filters:** narrow to specific bands, or to CW, SSB, FM, AM, Data and DV. Filters apply instantly and don't re-query the API.
+- **Map view, shown with every search:** pins on [OpenTopoMap](https://opentopomap.org/) tiles via [Leaflet](https://leafletjs.com/), with the search radius or grid outline drawn on the map. Several alerts on the same summit share one numbered pin. The map opens automatically, and **Hide map** tucks it away.
 - **Export:** saves the current, filtered results to a plain `.txt` list.
 - **Distance and bearing** from your search point to each summit, in miles or kilometres.
-- **Light and dark themes**, remembered between visits.
+- **Light and dark themes:** dark by default; your choice is remembered between visits.
 - **Wildcard alerts** (e.g. `W7W/MC-XXX`) are listed separately rather than dropped.
 
 ![Summit Lookout Map View](docs/screenshot2.png)
@@ -41,8 +42,24 @@ Nothing is fetched until you press **Search alerts**. Then the app:
 1. Downloads the current alert list from the SOTA API.
 2. In region mode, matches alerts by reference. No coordinates are needed.
 3. In grid and lat/lon modes, narrows the list to associations whose bounding box overlaps your search area, looks up coordinates for each alerted summit, and keeps the ones inside your radius or grid.
-4. Displays list of matched alerts in a table. These results can be viewed in a map, and exported to a .txt file
-5. Caches summit coordinates in your browser, so later searches make fewer API calls.
+4. Drops alerts posted only for long-distance HF bands, and says in the status line how many were left out.
+5. Shows the matched alerts on the map and in a table. Results can be exported to a `.txt` file.
+6. Caches summit coordinates in your browser, so later searches make fewer API calls.
+
+### Which bands are shown
+
+Summit Lookout is for local and regional contacts, so it only lists alerts on bands that reliably work within about 500 miles:
+
+| Group | Bands | Why |
+|---|---|---|
+| VHF/UHF | 6m, 2m, 1.25m, 70cm, 23cm | Line of sight, extended by summit height |
+| Regional HF | 160m, 80m, 60m, 40m | Ground wave and near-vertical skywave (NVIS), roughly 0–500 miles |
+
+- An alert is kept if it lists **at least one** of these bands. `14.285-ssb, 146.52-fm` stays; `14.062-cw` alone does not.
+- Alerts with no recognisable band are kept, so nothing is silently missed.
+- The status line reports how many alerts in your area were left out.
+
+30m and the higher HF bands usually skip past nearby stations, so they're excluded. 30m is a borderline case that can cover 300–600 miles in daytime. To include it, add `"30m"` to `LOCAL_HF` in `docs/js/sota-alerts.js`.
 
 ### Band and mode detection
 
@@ -53,7 +70,7 @@ Band and mode are matched independently. An alert for `7.032-cw, 146.52-fm` will
 ## Using it locally
 
 The app is plain HTML, CSS and JavaScript with no build step.<br>
-You can simply clone locally, and open the `index.hmtl` to run. This is simplicity by design.
+You can simply clone it locally and open `docs/index.html` to run it. This is simplicity by design.
 
 Serving it over HTTP is more reliable, though, because some browsers restrict `file://` pages:
 
@@ -64,6 +81,15 @@ python3 -m http.server 8000
 # open http://localhost:8000
 ```
 
+
+## Customizing the header image
+
+The banner behind the title is set in `docs/css/styles.css`, in the `.hero` rule. To use your own photo:
+
+1. Add it to `docs/images/`. Aim for about 1600×400 px, JPG or WebP, under about 300 KB.
+2. Change `url("../images/header.svg")` in the `.hero` rule to point at your file.
+
+A dark gradient sits between the photo and the title, so the title stays readable on any image. Images served from the site itself are already allowed by the Content Security Policy.
 
 ## Security and privacy
 
@@ -82,6 +108,7 @@ Found a security issue? Please open a private security advisory on this repo rat
 - **The SOTA API has no published specification.** Endpoints or response fields may change without notice. The app tries fallback endpoints and reports errors in the status line.
 - **Wildcard alerts** (`-XXX`) can't be placed on the map or measured for distance.
 - **Band and mode detection** is heuristic. See [Band and mode detection](#band-and-mode-detection).
+- **The 500-mile band rule is a rule of thumb.** Propagation varies with time of day, season and solar conditions. A 40m signal may skip past you at night, and 6m can open well beyond 500 miles during sporadic-E.
 - **OpenTopoMap** is a free, volunteer-run service. Tiles may load slowly at busy times, and the maximum zoom is 17.
 
 ## Data sources and credits
