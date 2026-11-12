@@ -97,7 +97,8 @@
   // Maidenhead -> lat/lon (center of square)
   function gridToLatLon(g) {
     g = g.trim();
-    if (!/^[A-Ra-r]{2}(\d{2}([A-Xa-x]{2}(\d{2}([A-Xa-x]{2})?)?)?)?$/.test(g)) return null;
+    // At least a 4-character square (about 70 x 100 miles); a 2-character field is far wider than 250 miles.
+    if (!/^[A-Ra-r]{2}\d{2}([A-Xa-x]{2}(\d{2}([A-Xa-x]{2})?)?)?$/.test(g)) return null;
     g = g.toUpperCase();
     let lon = -180, lat = -90;
     let lonSize = 20, latSize = 10;
@@ -220,10 +221,11 @@
   ];
   const BAND_NAMES = BANDS.map(b => b[0]);
   const HF = ["160m","80m","60m","40m","30m","20m","17m","15m","12m","10m"];
-  // Bands that reliably work within ~500 miles. This app is for local/regional chasing,
+  // Bands that reliably work within ~250 miles. This app is for local/regional chasing,
   // so alerts posted ONLY on other bands (30m and up) are left out of the results.
   //  - VHF/UHF: line of sight, extended by summit height
-  //  - HF 160/80/60/40m: ground wave and near-vertical skywave (NVIS), roughly 0-500 mi
+  //  - HF 160/80/60/40m: ground wave and near-vertical skywave (NVIS), roughly 0-250 mi
+  //    (40m is most dependable in daytime, when most activations happen; at night it skips farther)
   const LOCAL_VU = ["6m", "2m", "1.25m", "70cm", "23cm"];
   const LOCAL_HF = ["160m", "80m", "60m", "40m"];
   const LOCAL_BANDS = new Set([...LOCAL_VU, ...LOCAL_HF]);
@@ -397,7 +399,19 @@
   $("units").addEventListener("change", () => { if (rows.length) render($("units").value); });
 
   const BM_KEY = "sotaAlertsNear.bm.v1";
+  // "VHF/UHF only" is a shortcut: on = select exactly the VHF/UHF bands; off = clear the band selection.
+  // It shows as on whenever the band selection is exactly the VHF/UHF set, however it was made.
+  function syncVuOnly() {
+    const sel = bmState().bands;
+    $("vuOnly").checked = sel.length === LOCAL_VU.length && LOCAL_VU.every(b => sel.includes(b));
+  }
+  $("vuOnly").addEventListener("change", () => {
+    const on = $("vuOnly").checked;
+    document.querySelectorAll(".bandCb").forEach(c => c.checked = on && LOCAL_VU.includes(c.value));
+    onBMChange();
+  });
   function onBMChange() {
+    syncVuOnly();
     saveJSON(BM_KEY, bmState());
     if (!$("results").hidden) render($("units").value);
     renderWild();
@@ -410,6 +424,7 @@
       document.querySelectorAll(".modeCb").forEach(c => c.checked = (saved.modes || []).includes(c.value));
       $("incUnclear").checked = saved.unclear !== false;
     }
+    syncVuOnly();
   })();
   document.querySelectorAll(".bandCb, .modeCb, #incUnclear").forEach(c => c.addEventListener("change", onBMChange));
   $("clearBM").addEventListener("click", () => {
@@ -627,6 +642,18 @@
   const prefs = loadJSON(PREFS_KEY, {});
   for (const k of PREF_FIELDS) if (prefs[k] !== undefined) $(k).value = prefs[k];
 
+  // Search area is capped at 250 miles (400 km) to match the regional band set.
+  const MAX_RADIUS = { mi: 250, km: 400 };
+  const maxRadius = () => MAX_RADIUS[$("units").value === "km" ? "km" : "mi"];
+  function syncRadiusLimit() {
+    const max = maxRadius();
+    $("radius").max = String(max);
+    if (parseFloat($("radius").value) > max) $("radius").value = String(max);
+    $("radiusMax").textContent = `(max ${max} ${$("units").value === "km" ? "km" : "mi"})`;
+  }
+  $("units").addEventListener("change", syncRadiusLimit);
+  syncRadiusLimit();
+
   const HINTS = {
     grid: "Searches a radius around the grid's center, or only summits that fall inside the grid.",
     region: "W7W = whole association · W7W/MC = one region · W7W/MC-001 = one summit. No radius needed.",
@@ -708,7 +735,7 @@
         rKm = distanceKm(center, { lat: gridBox.maxLat, lon: gridBox.maxLon }) + 1;
       } else {
         radiusIn = parseFloat($("radius").value);
-        if (!(radiusIn > 0) || radiusIn > 2000) { setStatus("Radius must be between 1 and 2000.", "err"); return; }
+        if (!(radiusIn > 0) || radiusIn > maxRadius()) { setStatus(`Radius must be between 1 and ${maxRadius()} ${units === "km" ? "km" : "miles"}.`, "err"); return; }
         rKm = units === "mi" ? radiusIn / 0.621371 : radiusIn;
       }
     }

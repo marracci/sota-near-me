@@ -71,6 +71,10 @@
     </div>
     <fieldset>
       <legend>Band / mode filter (none selected = show all; changes apply instantly, no new query)</legend>
+      <div class="toggles">
+        <span class="lbl">Quick filter</span>
+        <label class="tog"><input type="checkbox" id="vuOnly"><span>VHF/UHF only</span></label>
+      </div>
       <div class="toggles" id="bandTogglesV"><span class="lbl">VHF/UHF</span></div>
       <div class="toggles" id="bandTogglesH"><span class="lbl">Regional HF</span></div>
       <div class="toggles" id="modeToggles"><span class="lbl">Modes</span></div>
@@ -127,7 +131,7 @@
     <summary>How this works / troubleshooting</summary>
     <p><b>Association / Region mode</b> matches alerts by reference only (no coordinates needed): W7W, W7W/MC, or W7W/MC-001. Wildcard alerts in that region (e.g. W7W/MC-XXX) are included.</p>
     <p><b>Grid and Lat/Lon modes:</b> 1. Fetches all current alerts from the SOTA API. 2. Fetches the association list and keeps only associations whose bounding box overlaps your search circle (or uses the associations you typed). 3. Looks up coordinates for each alerted summit in those associations (cached in this browser afterwards). 4. Keeps summits inside your radius and within the look-ahead window.</p>
-    <p><b>Bands shown:</b> this app is for local and regional contacts, so it only lists alerts on bands that reliably work within about 500 miles: VHF/UHF (6m, 2m, 1.25m, 70cm, 23cm) and the regional HF bands (160m, 80m, 60m, 40m, which reach that range by ground wave and near-vertical skywave). Alerts posted only for 30m and higher HF bands, which usually skip past nearby stations, are left out and counted in the note above the results. Alerts with no clear band are kept, so you don't miss them.</p>
+    <p><b>Bands shown:</b> this app is for local and regional contacts, so it only lists alerts on bands that reliably work within about 250 miles: VHF/UHF (6m, 2m, 1.25m, 70cm, 23cm) and the regional HF bands (160m, 80m, 60m, 40m, which reach that range by ground wave and near-vertical skywave). Alerts posted only for 30m and higher HF bands, which usually skip past nearby stations, are left out and counted in the note above the results. Alerts with no clear band are kept, so you don't miss them.</p>
     <p>If you see a network/CORS error, open the page from a web server (e.g. GitHub Pages or <code>python3 -m http.server</code>) rather than as a local file, or try another browser. The SOTA API does not publish a formal spec; endpoints tried are listed in the status line on failure.</p>
     <p><button type="button" id="clearCache">Clear cached summit coordinates</button></p>
   </details>
