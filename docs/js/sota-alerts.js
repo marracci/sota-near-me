@@ -402,10 +402,11 @@
   // "VHF/UHF only" is a shortcut: on = select exactly the VHF/UHF bands; off = clear the band selection.
   // It shows as on whenever the band selection is exactly the VHF/UHF set, however it was made.
   function syncVuOnly() {
+    if (!$("vuOnly")) return;       // optional: an older index.html may not have it
     const sel = bmState().bands;
     $("vuOnly").checked = sel.length === LOCAL_VU.length && LOCAL_VU.every(b => sel.includes(b));
   }
-  $("vuOnly").addEventListener("change", () => {
+  $("vuOnly")?.addEventListener("change", () => {
     const on = $("vuOnly").checked;
     document.querySelectorAll(".bandCb").forEach(c => c.checked = on && LOCAL_VU.includes(c.value));
     onBMChange();
@@ -649,7 +650,8 @@
     const max = maxRadius();
     $("radius").max = String(max);
     if (parseFloat($("radius").value) > max) $("radius").value = String(max);
-    $("radiusMax").textContent = `(max ${max} ${$("units").value === "km" ? "km" : "mi"})`;
+    const label = $("radiusMax");   // optional: an older index.html may not have it
+    if (label) label.textContent = `(max ${max} ${$("units").value === "km" ? "km" : "mi"})`;
   }
   $("units").addEventListener("change", syncRadiusLimit);
   syncRadiusLimit();

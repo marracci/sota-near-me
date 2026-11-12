@@ -18,7 +18,7 @@
     <button type="button" id="themeBtn" aria-label="Toggle dark mode">Dark mode</button>
     <h1>SOTA Near Me</h1>
   </header>
-  <p class="sub">Find upcoming SOTAwatch alerts (planned activations) near you, by grid square, association/region, or coordinates. Built for VHF/UHF and regional HF chasing: only bands that work within about 500 miles are shown. Nothing is fetched until you press Search.</p>
+  <p class="sub">Find upcoming SOTAwatch alerts (planned activations) near you, by grid square, association/region, or coordinates. Built for VHF/UHF and regional HF chasing: searches cover up to 250 miles, and only bands that work within that range are shown. Nothing is fetched until you press Search.</p>
 
   <form id="f" autocomplete="off">
     <div class="row">
@@ -50,8 +50,8 @@
       </label>
     </div>
     <div class="row">
-      <label data-mode="grid latlon" data-radius>Radius
-        <input id="radius" type="number" min="1" max="2000" value="100">
+      <label data-mode="grid latlon" data-radius>Radius <span id="radiusMax"></span>
+        <input id="radius" type="number" min="1" max="250" value="100">
       </label>
       <label data-mode="grid latlon">Units
         <select id="units"><option value="km">km</option><option value="mi" selected>miles</option></select>
@@ -123,7 +123,7 @@
     <p class="muted">Wildcard refs (e.g. W7W/LC-XXX) or summits the API couldn't locate. They may or may not be in range.</p>
     <div class="tablewrap"><table><tbody id="wild"></tbody></table></div>
   </div>
-  <div class="footer">© 2026, B.J. Marraccini / <a href="https://github.com/marracci" target="_blank" rel="noopener noreferrer">GitHub</a> / <a href="https://marracci.github.io" target="_blank" rel="noopener noreferrer">My Website</a><br><br>
+   <div class="footer">© 2026, B.J. Marraccini / <a href="https://github.com/marracci" target="_blank" rel="noopener noreferrer">GitHub</a> / <a href="https://marracci.github.io" target="_blank" rel="noopener noreferrer">My Website</a><br><br>
     <b>73!</b> -- <a href="https://www.qrz.com/db/KD7MTN" target="_blank" rel="noopener noreferrer">KD7MTN</a> 
   </div>
 
@@ -131,7 +131,7 @@
     <summary>How this works / troubleshooting</summary>
     <p><b>Association / Region mode</b> matches alerts by reference only (no coordinates needed): W7W, W7W/MC, or W7W/MC-001. Wildcard alerts in that region (e.g. W7W/MC-XXX) are included.</p>
     <p><b>Grid and Lat/Lon modes:</b> 1. Fetches all current alerts from the SOTA API. 2. Fetches the association list and keeps only associations whose bounding box overlaps your search circle (or uses the associations you typed). 3. Looks up coordinates for each alerted summit in those associations (cached in this browser afterwards). 4. Keeps summits inside your radius and within the look-ahead window.</p>
-    <p><b>Bands shown:</b> this app is for local and regional contacts, so it only lists alerts on bands that reliably work within about 250 miles: VHF/UHF (6m, 2m, 1.25m, 70cm, 23cm) and the regional HF bands (160m, 80m, 60m, 40m, which reach that range by ground wave and near-vertical skywave). Alerts posted only for 30m and higher HF bands, which usually skip past nearby stations, are left out and counted in the note above the results. Alerts with no clear band are kept, so you don't miss them.</p>
+    <p><b>Bands shown:</b> this app is for local and regional contacts, so it only lists alerts on bands that reliably work within about 250 miles: VHF/UHF (6m, 2m, 1.25m, 70cm, 23cm) and the regional HF bands (160m, 80m, 60m, 40m, which reach that range by ground wave and near-vertical skywave; 40m is most dependable in daytime). Radius searches are capped at 250 miles (400 km). Alerts posted only for 30m and higher HF bands, which usually skip past nearby stations, are left out and counted in the note above the results. Alerts with no clear band are kept, so you don't miss them.</p>
     <p>If you see a network/CORS error, open the page from a web server (e.g. GitHub Pages or <code>python3 -m http.server</code>) rather than as a local file, or try another browser. The SOTA API does not publish a formal spec; endpoints tried are listed in the status line on failure.</p>
     <p><button type="button" id="clearCache">Clear cached summit coordinates</button></p>
   </details>
