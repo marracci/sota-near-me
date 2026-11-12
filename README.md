@@ -2,9 +2,9 @@
 
 **Find upcoming SOTA activations near you, built for VHF/UHF and regional HF chasers.**
 
-Summit Lookout is a small, static web app for [Summits on the Air (SOTA)](https://www.sota.org.uk/) chasers. Its main purpose is to tell VHF/UHF operators when an activator has set an alert near them. It searches [SOTAwatch](https://sotawatch.sota.org.uk/) **alerts** (planned activations) for a grid square, an association or region, or a point on the map, and shows only alerts on bands that work within about 500 miles. Results appear on a topographic map and in a table, can be filtered by band and mode, and can be exported to a text file.
+`SOTA Near Me` is a small, static web app for [Summits on the Air (SOTA)](https://www.sota.org.uk/) chasers. Its primary purpose is to tell VHF/UHF operators when an activator has set an alert near them. It searches [SOTAwatch](https://sotawatch.sota.org.uk/) **alerts** (planned activations) for a grid square, an association or region, or a point on the map, and shows only alerts on bands that work within about 250 miles. Results appear on a topographic map and in a table, can be filtered by band and mode, and can be exported to a text file.
 
-It runs entirely in your browser. There's no server, no account, no API key, and no tracking.
+It runs entirely in your browser. There's **no server, no account, no API key, and no tracking**.
 
 **Live site:** https://marracci.github.io/sota-near-me/
 
@@ -53,7 +53,7 @@ Summit Lookout is for local and regional contacts, so it only lists alerts on ba
 | Group | Bands | Why |
 |---|---|---|
 | VHF/UHF | 6m, 2m, 1.25m, 70cm, 23cm | Line of sight, extended by summit height |
-| Regional HF | 160m, 80m, 60m, 40m | Ground wave and near-vertical skywave (NVIS), roughly 0–500 miles |
+| Regional HF | 160m, 80m, 60m, 40m | Ground wave and near-vertical skywave (NVIS), roughly 0–250 miles |
 
 - An alert is kept if it lists **at least one** of these bands. `14.285-ssb, 146.52-fm` stays; `14.062-cw` alone does not.
 - Alerts with no recognisable band are kept, so nothing is silently missed.
@@ -99,7 +99,7 @@ Found a security issue? Please open a private security advisory on this repo rat
 - **The SOTA API has no published schema specification.** Endpoints or response fields may change without notice. The app tries fallback endpoints and reports errors in the status line.
 - **Wildcard alerts** (`-XXX`) can't be placed on the map or measured for distance.
 - **Band and mode detection** is heuristic. See [Band and mode detection](#band-and-mode-detection).
-- **The 500-mile band rule is a rule of thumb.** Propagation varies with time of day, season and solar conditions. A 40m signal may skip past you at night, and 6m can open well beyond 500 miles during sporadic-E.
+- **The 250-mile band rule is mostly because of Line of Sight.**
 - **OpenTopoMap** is a free, volunteer-run service. Tiles may load slowly at busy times, and the maximum zoom is 17.
 
 ## Data sources and credits
