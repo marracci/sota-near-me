@@ -52,7 +52,7 @@ Nothing is fetched until you press **Search alerts**. Then the app:
 
 | Group | Bands | Why |
 |---|---|---|
-| VHF/UHF | 6m, 2m, 1.25m, 70cm, 23cm | Line of sight, extended by summit height |
+| VHF/UHF | 6m, 2m, 1.25m, 70cm | Line of sight, extended by summit height |
 | Regional HF | 160m, 80m, 60m, 40m | Ground wave and near-vertical skywave (NVIS), roughly 0–250 miles |
 
 - An alert is kept if it lists **at least one** of these bands. `14.285-ssb, 146.52-fm` stays; `14.062-cw` alone does not.
