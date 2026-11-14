@@ -2,7 +2,7 @@
 
 **Find upcoming SOTA activations near you, built for VHF/UHF and regional HF chasers.**
 
-`SOTA Near Me` is a small, static web app for [Summits on the Air (SOTA)](https://www.sota.org.uk/) chasers. Its primary purpose is to tell VHF/UHF operators when an activator has set an alert near them. It searches [SOTAwatch](https://sotawatch.sota.org.uk/) **alerts** (planned activations) for a grid square, an association or region, or a point on the map, and shows only alerts on bands that work within about 250 miles. Results appear on a topographic map and in a table, can be filtered by band and mode, and can be exported to a text file.
+`SOTA Near Me` is a small, static web app for [Summits on the Air (SOTA)](https://www.sota.org.uk/) chasers. Its primary purpose is to allow VHF/UHF operators to query where an activator has set an alert nearby a given location. It searches [SOTAwatch](https://sotawatch.sota.org.uk/) **alerts** (planned activations) for a grid square, an association or region, or a point on the map, and shows only alerts on bands that work within about 250 miles. Results appear on a topographic map and in a table, can be filtered by band and mode, and can be exported to a text file.
 
 It runs entirely in your browser. There's **no server, no account, no API key, and no tracking**.
 
@@ -14,7 +14,7 @@ It runs entirely in your browser. There's **no server, no account, no API key, a
 
 ## Disclaimer
 
-Summit Lookout is an independent project. It is **not affiliated with or endorsed by** Summits on the Air (SOTA), SOTAwatch, SOTLAS or OpenTopoMap. "Summits on the Air" and "SOTA" are names of the SOTA programme.
+`SOTA Near Me` is an independent project. It is **not affiliated with or endorsed by** Summits on the Air (SOTA), SOTAwatch, SOTLAS or OpenTopoMap. "Summits on the Air" and "SOTA" are names of the SOTA programme.
 
 Alert times, frequencies and locations are whatever activators posted. Always confirm on air.
 
@@ -33,7 +33,7 @@ Alert times, frequencies and locations are whatever activators posted. Always co
 - **Light and dark themes:** dark by default; your choice is remembered between visits.
 - **Wildcard alerts** (e.g. `W7W/MC-XXX`) are listed separately rather than dropped.
 
-![Summit Lookout Map View](docs/screenshot2.png)
+![SOTA Near Me Map View](docs/screenshot2.png)
 
 ## How it works
 
@@ -48,7 +48,7 @@ Nothing is fetched until you press **Search alerts**. Then the app:
 
 ### Which bands are shown
 
-Summit Lookout is for local and regional contacts, so it only lists alerts on bands that reliably work within about 500 miles:
+`SOTA Near Me` is for local and regional contacts, so it only lists alerts on bands that reliably work within about 250 miles:
 
 | Group | Bands | Why |
 |---|---|---|
@@ -72,7 +72,7 @@ Band and mode are matched independently. An alert for `7.032-cw, 146.52-fm` will
 The app is plain HTML, CSS and JavaScript with no build step.<br>
 You can simply clone it locally and open `docs/index.html` to run it. This is simplicity by design.
 
-Serving it over HTTP is more reliable, though, because some browsers restrict `file://` pages:
+Serving it over HTTP may be more reliable, though, because some browsers restrict `file://` pages:
 
 ```bash
 git clone https://github.com/<username>/<repo>.git
@@ -99,7 +99,7 @@ Found a security issue? Please open a private security advisory on this repo rat
 - **The SOTA API has no published schema specification.** Endpoints or response fields may change without notice. The app tries fallback endpoints and reports errors in the status line.
 - **Wildcard alerts** (`-XXX`) can't be placed on the map or measured for distance.
 - **Band and mode detection** is heuristic. See [Band and mode detection](#band-and-mode-detection).
-- **The 250-mile band rule is mostly because of Line of Sight.**
+- **The 250-mile search rule** is mostly because of the primary use case: VHF/UHF spotting.
 - **OpenTopoMap** is a free, volunteer-run service. Tiles may load slowly at busy times, and the maximum zoom is 17.
 
 ## Data sources and credits
@@ -116,4 +116,4 @@ Please use these free services considerately. The app queries only when you pres
 
 [MIT](LICENSE) © 2026 B.J. Marraccini
 
-73! KD7MTN
+73! [KD7MTN](https://qrz.com/db/kd7mtn)
