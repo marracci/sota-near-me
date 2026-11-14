@@ -226,7 +226,7 @@
   //  - VHF/UHF: line of sight, extended by summit height
   //  - HF 160/80/60/40m: ground wave and near-vertical skywave (NVIS), roughly 0-250 mi
   //    (40m is most dependable in daytime, when most activations happen; at night it skips farther)
-  const LOCAL_VU = ["6m", "2m", "1.25m", "70cm", "23cm"];
+  const LOCAL_VU = ["6m", "2m", "70cm"];
   const LOCAL_HF = ["160m", "80m", "60m", "40m"];
   const LOCAL_BANDS = new Set([...LOCAL_VU, ...LOCAL_HF]);
   const MODES = ["CW", "SSB", "FM", "AM", "Data", "DV"];
